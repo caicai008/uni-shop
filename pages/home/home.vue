@@ -1,5 +1,9 @@
 <template>
 	<view>
+		<!-- 搜索框 -->
+		<view class="search-box">
+			<my-search @click="goSearch"></my-search>
+		</view>
 		<!-- 轮播图 -->
 		<swiper :indicator-dots="true" :autoplay="true" :interval="3000" :duration="1000">
 			<swiper-item v-for="item in swiperList" :key="item.goods_id">
@@ -45,7 +49,6 @@
 	export default {
 		data() {
 			return {
-				
 				swiperList: [], // 轮播图列表
 				navList: [], // 分类导航
 				floorList: [] // 楼层的数据列表
@@ -94,12 +97,24 @@
 				    })
 				  })
 				this.floorList = res.message
+			},
+			
+			goSearch() {
+				uni.navigateTo({
+					url:'/subpkg/search/search'
+				})
 			}
 		}
 	}
 </script>
 
 <style>
+.search-box {
+	position: sticky;
+	top: 0;
+	z-index: 999;
+}	
+
 swiper {
 	height: 330rpx;
 }

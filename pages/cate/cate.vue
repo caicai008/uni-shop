@@ -1,5 +1,8 @@
 <template>
 	<view>
+		<!-- 搜索框 -->
+		<!-- <my-search :bgcolor="'green'" :radius="1"></my-search> -->
+		<my-search @click="goSearch"></my-search>
 		<view class="scroll-view-container">
 			<!-- 左侧的滚动视图区域 -->
 			<scroll-view class="left-scroll-view" scroll-y :style="{height: wh + 'px'}">
@@ -45,7 +48,7 @@
 		},
 		onLoad() {
 			const sysinfo = uni.getSystemInfoSync()
-			this.wh = sysinfo.windowHeight
+			this.wh = sysinfo.windowHeight - 50
 			
 			this.getCateList()
 		},
@@ -72,6 +75,14 @@
 			gotoGoodsList(item3) {
 				uni.navigateTo({
 					url: '/subpkg/goods_list/goods_list?cid=' + item3.cat_id
+				})
+			},
+			
+			// 点击搜索跳转到搜索页
+			goSearch() {
+				// console.log('ok');
+				uni.navigateTo({
+					url:'/subpkg/search/search'
 				})
 			}
 		}
