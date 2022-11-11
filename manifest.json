@@ -55,7 +55,13 @@
             "urlCheck" : false,
             "checkSiteMap" : false
         },
-        "usingComponents" : true
+        "usingComponents" : true,
+		"requiredPrivateInfos": [
+		    "getLocation",
+		    "onLocationChange",
+		    "startLocationUpdateBackground",
+		    "chooseAddress"
+		 ]
     },
     "mp-alipay" : {
         "usingComponents" : true

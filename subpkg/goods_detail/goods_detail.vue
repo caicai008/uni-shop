@@ -9,7 +9,7 @@
 		<!-- 价格信息 -->
 		<view class="goods-info-box">
 			<!-- 价格 -->
-			<view class="goods-price">￥{{goodsInfo.goods_price}}</view>
+			<view class="goods-price" v-if="goodsInfo.goods_price">￥{{goodsInfo.goods_price}}</view>
 			<view class="goods-info">
 				<!-- 名称 -->
 				<view class="goods-name">{{goodsInfo.goods_name}}</view>
@@ -38,6 +38,9 @@
 </template>
 
 <script>
+	import store from '@/store/store.js'
+	import { mapGetters } from 'vuex'
+	
 	export default {
 		data() {
 			return {
@@ -50,7 +53,7 @@
 				}, {
 				  icon: 'cart',
 				  text: '购物车',
-				  info: 2
+				  info: 0
 				}],
 				// 右侧按钮组的配置对象
 				buttonGroup: [{
@@ -71,6 +74,22 @@
 			this.goods_id = options.goods_id
 			this.getGoodsInfo()
 		},
+		watch: {
+			total: {
+				// handler 属性用来定义侦听器的 function 处理函数
+				handler(newValue) {
+					const findResult = this.options.find(x => x.text === '购物车')
+					if(findResult) {
+						findResult.info = newValue
+					}
+				},
+				// immediate 属性用来声明此侦听器，是否在页面初次加载完毕后立即调用
+				immediate: true
+			}
+		},
+		computed: {
+			...mapGetters('m_cart', ['total'])
+		},
 		methods: {
 			async getGoodsInfo() {
 				const { data: res } = await uni.$http.get('public/v1/goods/detail?goods_id=' + this.goods_id)
@@ -78,7 +97,7 @@
 				if (res.meta.status !== 200) return uni.$showMsg()
 				
 				// 图片处理
-				 res.message.goods_introduce = res.message.goods_introduce.replace(/<img /g, '<img style="display:block;" ')
+				 res.message.goods_introduce = res.message.goods_introduce.replace(/<img /g, '<img style="display:block;" ').replace(/webp /g, 'jpg')
 				
 				this.goodsInfo = res.message
 			},
@@ -99,6 +118,21 @@
 						url: '/pages/cart/cart'
 					})
 				}
+			},
+			
+			// 加入购物车
+			buttonClick(e) {
+				// 2. 组织一个商品的信息对象
+				const goods = {
+					goods_id: this.goodsInfo.goods_id,       // 商品的Id
+					goods_name: this.goodsInfo.goods_name,   // 商品的名称
+					goods_price: this.goodsInfo.goods_price, // 商品的价格
+					goods_count: 1,                           // 商品的数量
+					goods_small_logo: this.goodsInfo.goods_small_logo, // 商品的图片
+					goods_state: true                         // 商品的勾选状态
+				}
+				store.commit('m_cart/addToCart', goods)
+				store.commit('m_cart/saveToStorage')
 			}
 		}
 	}
