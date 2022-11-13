@@ -9,10 +9,18 @@ uni.$http = $http
 $http.baseUrl = 'https://api-hmugo-web.itheima.net/api/'
 
 // 请求拦截器
-$http.beforeRequest = function() {
+$http.beforeRequest = function(options) {
 	wx.showLoading({
 		title: '请求加载中'
 	})
+	
+	// console.log(store);
+	// 判断请求的是否为有权限的api接口
+	if(options.url.indexOf('/my/') !== -1) {
+		options.header = {
+			Authorization: store.state.m_user.token
+		}
+	}
 }
 
 // 响应拦截器
